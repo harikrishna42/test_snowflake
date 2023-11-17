@@ -4,9 +4,9 @@ name: snowflake-devops-demo
 on:
   push:
     branches:
-      - dev
+      - main
     paths:
-      - 'sql/**'
+      - 'migrations/**'
   workflow_dispatch:
 
 jobs:
