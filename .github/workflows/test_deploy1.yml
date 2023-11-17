@@ -15,16 +15,19 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Snowflake CLI
-        uses: snowflakedb/snowflake-actions/setup-snowflake-cli@v1
-        with:
-          snowflake-account: ${{ secrets.SF_ACCOUNT }}
-          snowflake-warehouse: ${{ secrets.SF_WAREHOUSE }}
-          snowflake-role: ${{ secrets.SF_ROLE }}
-          snowflake-database: ${{ secrets.SF_DATABASE }}
-          snowflake-schema: ${{ secrets.SF_SCHEMA }}
-          snowflake-username: ${{ secrets.SF_USERNAME }}
-          snowflake-password: ${{ secrets.SF_PASSWORD }}
-
+        run: |
+            curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.12-linux_x86_64.bash
+            bash snowsql-1.2.12-linux_x86_64.bash
+            echo 'export PATH=~/snowsql:$PATH' >> ~/.bashrc
+            source ~/.bashrc
+  
       - name: Deploy Snowflake Code
         run: |
-          snowsql -f sql/test_view.sql
+          snowsql -a ${{ secrets.SF_ACCOUNT }} \
+                  -w ${{ secrets.SF_WAREHOUSE }} \
+                  -r ${{ secrets.SF_ROLE }} \
+                  -d ${{ secrets.SF_DATABASE }} \
+                  -s ${{ secrets.SF_SCHEMA }} \
+                  -u ${{ secrets.SF_USERNAME }} \
+                  -p ${{ secrets.SF_PASSWORD }} \
+                  -f sql/test_view.sql
