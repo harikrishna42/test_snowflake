@@ -2,11 +2,11 @@ name: snowflake-devops-demo
 
 # Controls when the action will run. 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'migrations/test-view.sql'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'migrations/test-view.sql'
   workflow_dispatch:
 
 jobs:
