@@ -27,7 +27,7 @@ jobs:
           python-version: 3.8.x
 
       - name: Print name
-        run: echo "Hello $VAR_ENV"
+        run: echo "Hello ${{ vars.VAR_ENV }}"
 
       - name: Run schemachange
         env:
