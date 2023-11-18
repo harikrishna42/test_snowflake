@@ -7,44 +7,35 @@ on:
   # Triggers the workflow on any branch or tag commit
   push:
     branches:
-      - "*"
+      - main
     tags:
-      - "v*"
+      - "/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-
-  deploy:
+  schema-change-job:
     runs-on: ubuntu-latest
-
-    env:
-      SF_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SF_USERNAME: ${{ secrets.SF_USERNAME }}
-      SF_ROLE: ${{ secrets.SF_ROLE }}
-      SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
-      SF_DATABASE: ${{ secrets.SF_DATABASE }}
-      SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Retrieve repository
+        uses: actions/checkout@v2
 
-      - name: Install SnowSQL
+      - name: Use Python 3.8.x
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.8.x
+
+      - name: Execute schemachange
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+          SNOWFLAKE_USERNAME: ${{ secrets.SF_USER }}
+          SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SF_DATABASE }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
         run: |
-          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
-          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
-      # Runs a single command using the runners shell
-      - name: Upload artifact to SnowSQL
-        run: |
-          ~/bin/snowsql -q 'put file://'$(pwd)'/storedproc.py @~/${{ github.ref_name }} overwrite=true' -o friendly=false
-      - name: Create or update storedproc
-        run: |
-          ~/bin/snowsql -q 'CREATE OR REPLACE PROCEDURE MYPROC_'$(echo ${{ github.ref_name }} | tr . _)'(message STRING)
-                                        RETURNS STRING
-                                        LANGUAGE PYTHON
-                                        RUNTIME_VERSION = '\''3.8'\''
-                                        PACKAGES = ('\''snowflake-snowpark-python'\'')
-                                        IMPORTS = ('\''@~/${{ github.ref_name }}/storedproc.py'\'')
-                                        HANDLER = '\''storedproc.run'\'';' -o friendly=false
+          pip install schemachange
+          schemachange -f migrations/test-view.sql -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USERNAME -r $SNOWFLAKE_ROLE -w $SNOWFLAKE_WAREHOUSE -d $SNOWFLAKE_DATABASE -c $SNOWFLAKE_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
