@@ -31,7 +31,7 @@ jobs:
       - name: Execute schemachange
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USERNAME: ${{ secrets.SF_USER }}
+          SNOWFLAKE_USERNAME: ${{ secrets.SF_USERNAME }}
           SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SNOWFLAKE_DATABASE: ${{ secrets.SF_DATABASE }}
