@@ -1,5 +1,8 @@
 USE WAREHOUSE COMPUTE_WH;
-USE SCHEMA PUBLIC;
+CREATE SCHEMA Hari;
 
-create or replace view v_check as
-select * from employees;
+CREATE TABLE HELLO_WORLD
+(
+   FIRST_NAME VARCHAR
+  ,LAST_NAME VARCHAR
+);
