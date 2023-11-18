@@ -37,5 +37,10 @@ jobs:
           SNOWFLAKE_DATABASE: ${{ secrets.SF_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
         run: |
-          pip install schemachange
-          schemachange -f migrations -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USERNAME -r $SNOWFLAKE_ROLE -w $SNOWFLAKE_WAREHOUSE -d $SNOWFLAKE_DATABASE -c $SNOWFLAKE_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          python --version
+          echo "Step 1: Installing schemachange"
+          pip install --upgrade schemachange
+          
+          echo "Step 2: Running schemachange"
+          schemachange -f $GITHUB_WORKSPACE/migrations -a $SNOWFLAKE_ACCOUNT -u $SNOWFLAKE_USERNAME -r $SNOWFLAKE_ROLE -w $SNOWFLAKE_WAREHOUSE -d $SNOWFLAKE_DATABASE -c $SNOWFLAKE_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
