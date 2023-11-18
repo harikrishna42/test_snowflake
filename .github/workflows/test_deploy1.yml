@@ -2,11 +2,11 @@ name: snowflake-devops
 
 # Controls when the action will run. 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'migrations/test1.sql'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'migrations/test1.sql'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
