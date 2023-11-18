@@ -5,11 +5,11 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on any branch or tag commit
-  push:
-    branches:
-      - main
-    tags:
-      - "migrations/**"
+  # push:
+  #   branches:
+  #     - main
+  #   tags:
+  #     - "migrations/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
